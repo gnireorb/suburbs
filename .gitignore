@@ -10,6 +10,9 @@
 *.vcxproj
 *.vcxproj.filters
 
+# Dear ImGui
+imgui.ini
+
 # Compiled Object files
 *.slo
 *.lo
