@@ -33,7 +33,6 @@ int main()
 	ImFont* ruda_regular = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(const_cast<std::uint8_t*>(backend::fonts::ruda_regular), sizeof(backend::fonts::ruda_regular), 20.f, &ruda_regular_config); ImFont* ruda_bold = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(const_cast<std::uint8_t*>(backend::fonts::ruda_bold), sizeof(backend::fonts::ruda_bold), 20.f, &ruda_bold_config);
 	IM_ASSERT(ruda_regular != NULL); IM_ASSERT(ruda_bold != NULL);
 
-
 	bool done = { false };
 	while (!done)
 	{
@@ -57,7 +56,28 @@ int main()
 
 			if (ImGui::Begin("Dear ImGui"))
 			{
+				static int hellos{ 0 };
+				if (ImGui::Button("Increase"))
+				{
+					auto t = []()
+					{
+						spdlog::info("Hello from another thread.");
+					};
+					std::thread(t).detach();
 
+					hellos++;
+				}
+				ImGui::SameLine();
+				ImGui::Text(fmt::format("Hello's: {}", hellos).c_str());
+				ImGui::Separator();
+				static int var_int{};
+				ImGui::InputInt("Var##int", &var_int);
+				ImGui::Separator();
+				static float var_float{};
+				ImGui::InputFloat("Var##float", &var_float);
+				ImGui::Separator();
+				static std::string var_string{};
+				ImGui::InputText("Var##string", &var_string);
 				ImGui::End();
 			}
 		}
