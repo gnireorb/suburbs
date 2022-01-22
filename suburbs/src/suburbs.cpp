@@ -3,13 +3,15 @@
 #include "backend/imgui_implementation.hpp"
 #include "backend/fonts.hpp"
 
+#include "util/util.hpp"
+
 int main()
 {
 	spdlog::set_pattern("[%H:%M:%S] [%t] [%^%l%$] %v");
 
-	WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, backend::imgui_implementation::wndproc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, _T("Dear ImGui"), NULL };
+	WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, backend::imgui_implementation::wndproc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, _T("suburbs"), NULL };
 	::RegisterClassEx(&wc);
-	HWND hwnd = ::CreateWindow(wc.lpszClassName, _T("Dear ImGui"), WS_OVERLAPPEDWINDOW, 100, 100, 1280, 720, NULL, NULL, wc.hInstance, NULL);
+	HWND hwnd = ::CreateWindow(wc.lpszClassName, _T("suburbs"), WS_OVERLAPPEDWINDOW, 100, 100, 405, 720, NULL, NULL, wc.hInstance, NULL);
 
 	if (!backend::imgui_implementation::create_device_d3d(hwnd))
 	{
@@ -52,32 +54,85 @@ int main()
 		ImGui::NewFrame();
 
 		{
-			ImGui::ShowDemoWindow(reinterpret_cast<bool*>(true));
-
-			if (ImGui::Begin("Dear ImGui"))
+			ImGui::SetNextWindowSize(ImVec2(360, 656), ImGuiCond_FirstUseEver);
+			ImGui::SetNextWindowPos(ImVec2(15, 12), ImGuiCond_FirstUseEver);
+			if (ImGui::Begin("suburbs", NULL, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize))
 			{
-				static int hellos{ 0 };
-				if (ImGui::Button("Increase"))
+				if (ImGui::CollapsingHeader("youtube-dlp"))
 				{
-					auto t = []()
+					if (util::file_exists("yt-dlp.exe"))
 					{
-						spdlog::info("Hello from another thread.");
-					};
-					std::thread(t).detach();
-
-					hellos++;
+						static std::string url{};
+						ImGui::InputText("URL##url", &url);
+						const char* const _type[]{ "audio", "video" };
+						static int type{};
+						ImGui::Combo("Type##type", &type, _type, IM_ARRAYSIZE(_type));
+						const char* const _audio_quality[]{ "best (0)", "half (5)", "worst (10)" };
+						static int audio_quality{};
+						const char* const _video_format[]{ "mp4", "mkv", "webm" };
+						static int video_format{};
+						switch (type)
+						{
+						case 0:
+						{
+							ImGui::Combo("Audio Quality##audio_quality", &audio_quality, _audio_quality, IM_ARRAYSIZE(_audio_quality));
+							break;
+						}
+						case 1:
+						{
+							ImGui::Combo("Video Format##video_format", &video_format, _video_format, IM_ARRAYSIZE(_video_format));
+							break;
+						}
+						}
+						if (ImGui::Button("Download"))
+						{
+							auto download = []()
+							{
+								if (type == 0)
+									switch (audio_quality)
+									{
+									case 0:
+									{
+										std::system(fmt::format("yt-dlp -x --audio-quality {} --audio-format mp3 {}", 0, url).c_str());
+										break;
+									}
+									case 1:
+									{
+										std::system(fmt::format("yt-dlp -x --audio-quality {} --audio-format mp3 {}", 5, url).c_str());
+										break;
+									}
+									case 2:
+									{
+										std::system(fmt::format("yt-dlp -x --audio-quality {} --audio-format mp3 {}", 10, url).c_str());
+										break;
+									}
+									}
+								else
+									switch (video_format)
+									{
+									case 0:
+									{
+										std::system(fmt::format("yt-dlp --format mp4 {}", url).c_str());
+										break;
+									}
+									case 1:
+									{
+										std::system(fmt::format("yt-dlp --format mkv {}", url).c_str());
+										break;
+									}
+									case 2:
+									{
+										std::system(fmt::format("yt-dlp --format webm {}", url).c_str());
+										break;
+									}
+									}
+							};
+							std::thread(download).detach();
+						}
+					}
+					ImGui::Separator();
 				}
-				ImGui::SameLine();
-				ImGui::Text(fmt::format("Hello's: {}", hellos).c_str());
-				ImGui::Separator();
-				static int var_int{};
-				ImGui::InputInt("Var##int", &var_int);
-				ImGui::Separator();
-				static float var_float{};
-				ImGui::InputFloat("Var##float", &var_float);
-				ImGui::Separator();
-				static std::string var_string{};
-				ImGui::InputText("Var##string", &var_string);
+				ImGui::Text("github.com/gnireorb/suburbs");
 				ImGui::End();
 			}
 		}
