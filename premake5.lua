@@ -20,12 +20,13 @@ project ("suburbs")
    language ("C++")
    targetdir ("bin/%{cfg.buildcfg}")
    objdir ("bin/obj/%{cfg.buildcfg}/%{prj.name}")
+   characterset ("MBCS")
 
    disablewarnings { "4244" }
    PrecompiledHeaderInclude = "common.hpp"
    PrecompiledHeaderSource = "%{prj.name}/src/common.cpp"
 
-   includedirs { "%{prj.name}/src", "include/json/single_include", "include/spdlog/include", "include/imgui", "include/imgui/backends" }
+   includedirs { "%{prj.name}/src", "include/httprequest/include", "include/json/single_include", "include/spdlog/include", "include/imgui", "include/imgui/backends" }
    files { "%{prj.name}/src/**.cpp", "%{prj.name}/src/**.hpp" }
 
    links { "imgui" }

@@ -7,3 +7,6 @@
 [submodule "include/json"]
 	path = include/json
 	url = https://github.com/nlohmann/json
+[submodule "include/httprequest"]
+	path = include/httprequest
+	url = https://github.com/elnormous/HTTPRequest
