@@ -1,5 +1,6 @@
 #include "youtube_dlp/youtube_dlp.hpp"
 #include "ngrok_helper/ngrok_helper.hpp"
+#include "ohm/ohm.hpp"
 
 namespace gui
 {
@@ -11,6 +12,7 @@ namespace gui
 		{
 			ngrok_helper::render();
 			youtube_dlp::render();
+			ohm::render();
 			ImGui::Separator();
 			ImGui::Text("github.com/gnireorb/suburbs");
 			ImGui::End();
