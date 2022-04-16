@@ -6,6 +6,8 @@ namespace youtube_dlp
 	{
 		if (ImGui::CollapsingHeader("youtube-dlp") && std::filesystem::exists("yt-dlp.exe"))
 		{
+			static std::string directory{"/demo"};
+			ImGui::InputText("Directory##directory", &directory);
 			static std::string url{};
 			ImGui::InputText("URL##url", &url);
 			const char* const _type[]{ "audio", "video" };
@@ -37,17 +39,17 @@ namespace youtube_dlp
 						{
 						case 0:
 						{
-							std::system(fmt::format("yt-dlp -x --audio-quality {} --audio-format mp3 {}", 0, url).c_str());
+							std::system(fmt::format("yt-dlp -x --audio-quality {} --audio-format mp3 {} -P {}", 0, url, directory).c_str());
 							break;
 						}
 						case 1:
 						{
-							std::system(fmt::format("yt-dlp -x --audio-quality {} --audio-format mp3 {}", 5, url).c_str());
+							std::system(fmt::format("yt-dlp -x --audio-quality {} --audio-format mp3 {} -P {}", 5, url, directory).c_str());
 							break;
 						}
 						case 2:
 						{
-							std::system(fmt::format("yt-dlp -x --audio-quality {} --audio-format mp3 {}", 10, url).c_str());
+							std::system(fmt::format("yt-dlp -x --audio-quality {} --audio-format mp3 {} -P {}", 10, url, directory).c_str());
 							break;
 						}
 						}
@@ -56,17 +58,17 @@ namespace youtube_dlp
 						{
 						case 0:
 						{
-							std::system(fmt::format("yt-dlp --format mp4 {}", url).c_str());
+							std::system(fmt::format("yt-dlp --format mp4 {} -P {}", url, directory).c_str());
 							break;
 						}
 						case 1:
 						{
-							std::system(fmt::format("yt-dlp --format mkv {}", url).c_str());
+							std::system(fmt::format("yt-dlp --format mkv {} -P {}", url, directory).c_str());
 							break;
 						}
 						case 2:
 						{
-							std::system(fmt::format("yt-dlp --format webm {}", url).c_str());
+							std::system(fmt::format("yt-dlp --format webm {} -P {}", url, directory).c_str());
 							break;
 						}
 						}
